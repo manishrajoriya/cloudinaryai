@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react'
 import toast, {Toaster} from 'react-hot-toast';
-
+import { FileUpload } from '@/components/ui/file-upload';
 const videoUpload:React.FC = () =>{
-    const [selectedvideo, setSelectedVideo] = useState<File | null>(null);
+    const [selectedvideo, setSelectedVideo] = useState<File | null>();
     const [title, setTitle] = useState<string>('');
     const [uploading, setUploading] = useState<boolean>(false)
     const [description, setDescription] = useState<string>('');
@@ -58,8 +58,9 @@ const videoUpload:React.FC = () =>{
   
 
   return (
-    <div>
+    <div className=''>
          <input 
+         className='input input-sm w-full  card-body'
         type="text" 
         placeholder="Enter video title" 
         value={title}
@@ -67,12 +68,14 @@ const videoUpload:React.FC = () =>{
       />
 
          <textarea
+         className='textarea textarea-bordered max-w-full'
         placeholder="Enter video description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
 
          <input 
+         className=' max-w-4xl mx-auto min-h-96 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg'
          title='upload video'
         type="file" 
         accept="video/*" 
@@ -80,6 +83,7 @@ const videoUpload:React.FC = () =>{
       />
 
       <button
+      className='btn btn-primary mt-4'
         onClick={handleUpload}
         disabled={uploading}
       >
