@@ -1,27 +1,33 @@
 import { auth } from '@clerk/nextjs/server'
 import { v2 as cloudinary } from 'cloudinary'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
-    secure: true
+    
 
 })
+
+interface CloudinaryResponse {
+    public_id: string;
+    [key: string]: any;
+    
+}
 
 export async function POST(request: NextRequest) {
     const {userId} = auth()
 
     if(!userId){
-        return  Response.json("Unauthorized", {status: 401})
+        return  NextResponse.json("Unauthorized", {status: 401})
     }
 
-    if (!process.env.CLOUDINARY_CLOUD_NAME ||
+    if (!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
         !process.env.CLOUDINARY_API_KEY ||
         !process.env.CLOUDINARY_API_SECRET) {
-        return  Response.json("Cloudinary credentials not found", { status: 500 })
+        return  NextResponse.json("Cloudinary credentials not found", { status: 500 })
     }
     try {
         const formData = await request.formData();
@@ -33,16 +39,26 @@ export async function POST(request: NextRequest) {
 
         const byte = await file.arrayBuffer();
         const buffer = Buffer.from(byte);
-        const result = await new Promise((resolve, reject) => {
-            cloudinary.uploader.upload_stream({ resource_type: 'auto' }, (error, result) => {
+        const result = await new Promise<CloudinaryResponse>((resolve, reject) => {
+            cloudinary.uploader.upload_stream({ 
+                
+                folder: "ai2",
+                
+            }, (error, result) => {
                 if (error) {
                     reject(error);
                 } else {
-                    resolve(result);
+                    resolve(result as CloudinaryResponse);
                 }
             }).end(buffer);
         });
+
+        return NextResponse.json(
+            { publicId: result.public_id}, { status: 200 }
+        )
     } catch (error) {
+        console.log("error in immage upload route", error);
+        return  NextResponse.json("Error uploading image", { status: 500 })
         
     }
     

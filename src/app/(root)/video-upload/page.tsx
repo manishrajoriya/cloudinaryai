@@ -86,6 +86,7 @@ const videoUpload:React.FC = () =>{
       className='btn btn-primary mt-4'
         onClick={handleUpload}
         disabled={uploading}
+        title='upload video'
       >
         {uploading? "uploading..." : "upload video"}
       </button>
