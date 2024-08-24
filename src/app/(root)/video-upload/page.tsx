@@ -1,10 +1,11 @@
 "use client"
 
+import { NextRequest } from 'next/server';
 import React, { useState } from 'react'
 import toast, {Toaster} from 'react-hot-toast';
-import { FileUpload } from '@/components/ui/file-upload';
+
 const videoUpload:React.FC = () =>{
-    const [selectedvideo, setSelectedVideo] = useState<File | null>();
+    const [selectedvideo, setSelectedVideo] = useState<File | null>(null);
     const [title, setTitle] = useState<string>('');
     const [uploading, setUploading] = useState<boolean>(false)
     const [description, setDescription] = useState<string>('');
@@ -42,20 +43,23 @@ const videoUpload:React.FC = () =>{
                 method: 'POST',
                 body: formData
             })
-
-            if (response.ok) {
+            console.log("1st fetch",response);
+            
+            if (response.status === 200) {
                 toast.success('Video uploaded successfully');
             }else{
                 toast.error('Failed to upload video');
             }
             
         } catch (error) {
-            toast.error('Failed to upload video');
+            toast.error('Failed to upload video catch');
             console.log(error);
         }
 
     }
-  
+    // get responce form route
+   
+    
 
   return (
     <div className=''>

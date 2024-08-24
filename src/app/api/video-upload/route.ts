@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { v2 as cloudinary } from 'cloudinary';
-import { useAuth } from "@clerk/nextjs";
+
+import { auth } from "@clerk/nextjs/server";
 
 
  cloudinary.config({ 
@@ -12,7 +13,7 @@ import { useAuth } from "@clerk/nextjs";
 
 
 export async function POST(request: NextRequest) {
-  const {userId} = useAuth()
+  const {userId} = auth()
   if (!userId) {
     return new NextResponse("Unauthorized", { status: 401 });
     
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
            const uploadStrem = cloudinary.uploader.upload_stream(
             {
                 resource_type: 'video',
-                folder: "video-uploads",
+                folder: "2video-upload",
                 transformation: [
                     { quality: 'auto', fetch_format: 'mp4' }
                 ],
@@ -55,6 +56,7 @@ export async function POST(request: NextRequest) {
             })
             uploadStrem.end(buffer);
         });
+        return NextResponse.json({data: uploadResult, title, description});
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: "Failed to upload video" }, { status: 500 });

@@ -1,17 +1,15 @@
 "use client"
-import React,{useState, useEffect} from 'react'
+import React, { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { CldImage } from 'next-cloudinary';
-import { IconProgress, IconProgressX } from '@tabler/icons-react';
 
-const page = () => {
-  const [file, setFile] = useState<File | null>(null)
+function page() {
+    const [file, setFile] = useState<File | null>(null)
   const [uploaded, setUploaded] = useState<boolean>(false)
   const [uploading, setUploading] = useState<boolean>(false)
   const [fileData, setFileData] = useState<string>('')
-  
-
-  const handleFileUpload = async() => {
+    
+    const handleFileUpload = async() => {
     if (!file) {
     toast.error('Please select a file')
       return
@@ -39,11 +37,9 @@ const page = () => {
       setUploading(false)
     }
   }
-
   return (
     <div>
-      <div>
-        <input type="file"
+         <input type="file"
         accept='image/*'
         disabled={uploading}
         multiple={false}
@@ -51,34 +47,19 @@ const page = () => {
         className='input input-sm w-full  card-body'
         onChange={(e) => setFile(e.target.files?.[0] || null)}
         />
-        
-        <button
-        className='btn btn-primary mt-4'
-        onClick={handleFileUpload}
-        >
-          upload image
-        </button>
-      </div>
-      <div>
-        {uploading && <IconProgressX/>}
-      </div>
-      <div>
+        <button onClick={handleFileUpload} disabled={uploading}>Upload</button>
         {uploaded && 
-        <div>
-          <CldImage
-            width="500"
-            height="500"
+        
+        <CldImage
+            width="960"
+            height="600"
             src={fileData}
-            
-            crop="fill"
-            gravity="auto"
             sizes="100vw"
-            alt="Description of my image"
-          />
-        </div>
+            removeBackground={true}
+            alt=""
+            />
         }
-      </div>
-      <Toaster />
+        <Toaster />
     </div>
   )
 }
