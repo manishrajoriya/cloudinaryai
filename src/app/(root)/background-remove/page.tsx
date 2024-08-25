@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { CldImage } from 'next-cloudinary';
+import { backgroundRemoval } from "@cloudinary/url-gen/actions/effect";
 
 function page() {
     const [file, setFile] = useState<File | null>(null)
@@ -18,7 +19,7 @@ function page() {
     try {
       const formData = new FormData()
       formData.append('file', file)
-      const response = await fetch('/api/image-upload', {
+      const response = await fetch('/api/bg-remove', {
         method: 'POST',
         body: formData
       })
@@ -29,14 +30,19 @@ function page() {
         throw new Error('Upload failed')
       }
 
-      const data = await response.json()
-      setFileData(data.publicId)
+      const {data} = await response.json()
+      console.log("data = ",data);
+      setFileData(data)
     } catch (error) {
       toast.error('Upload failed')
     } finally {
       setUploading(false)
     }
   }
+
+
+
+
   return (
     <div>
          <input type="file"
@@ -51,13 +57,13 @@ function page() {
         {uploaded && 
         
         <CldImage
-            width="960"
-            height="600"
-            src={fileData}
-            sizes="100vw"
-            removeBackground={true}
-            alt=""
-            />
+        src={fileData}
+        width={500}
+        height={500}
+        alt="Description of my image"
+        
+        />
+        
         }
         <Toaster />
     </div>
